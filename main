@@ -1,0 +1,18 @@
+from os import listdir
+import eyed3
+import re
+
+main_dir = 'path'
+folders = [f for f in listdir(main_dir)]
+
+for folder in folders:
+    s = [file for file in listdir(main_dir+f'/{folder}')]
+    for song in s:
+        try:
+            song = eyed3.load(main_dir+f'/{folder}/{song}')
+            song_name = re.findall(r'([&-.()\w\s]*)-(\s[\w]*.[\w\s.()]*)', song.path)
+            song.tag.artist = song_name[0][0].strip()
+            song.tag.title = song_name[0][1].strip()[:-4]
+            song.tag.save()
+        except NotImplementedError:
+            continue
